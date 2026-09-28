@@ -49,6 +49,7 @@ polarplot(x3, y3, 'm', 'LineWidth', 1.5);
 title('Funkcija y(x) polarinėse koordinatese');
 legend('y(x) = sin(x)cos(x)');
 %% P.Signalu grafinis atvaizdavimas, 24 VARIANTAS | Papildoma uzduotis
+
 Ampl = 6;
 f = 4;
 sigma = 1.2;
@@ -56,13 +57,23 @@ t = 0:0.001:1.5;
 U1 = 3.5;
 U2 = 2.5;
 
-rng(1);
 s = Ampl*sin(2*pi*f*t) + 0.5*Ampl*cos(4*pi*f*t);
 n = sigma*randn(size(t));
 s_triuksmas = s + n;
 
 b = s_triuksmas;
 b(abs(b) < U2) = 0;
+
+idx_virsh = s_triuksmas > U1;
+t_virsh = t(idx_virsh);
+U_virsh = s_triuksmas(idx_virsh);
+
+idx_max = find(b == max(b));
+idx_min = find(b == min(b));
+
+fprintf('Atrinktu reiksmiu dydis:\n%d\n', numel(U_virsh));
+fprintf('Didziausia filtruoto signalo reiksme:\n%.4f\n', max(b));
+fprintf('Maziausia filtruoto signalo reiksme:\n%.4f\n', min(b));
 
 asies_stilius = {'Color', 'red', 'FontSize', 13, 'FontWeight', 'bold'};
 violetine = [0.5 0 0.8];
@@ -88,16 +99,10 @@ xlim([min(t) max(t)]);
 ylim([y_min y_max]);
 
 subplot(2, 1, 2);
-idx_virsh = s_triuksmas > U1;
-t_virsh = t(idx_virsh);
-U_virsh = s_triuksmas(idx_virsh);
 stem(t_virsh, U_virsh, 'b', 'Marker', 'o'); hold on;
-
-idx_max = find(s_triuksmas == max(s_triuksmas));
-idx_min = find(s_triuksmas == min(s_triuksmas));
-plot(t(idx_max), s_triuksmas(idx_max), 'ro', ...
+plot(t(idx_max), b(idx_max), 'ro', ...
      'MarkerFaceColor', 'r', 'MarkerSize', 8);
-plot(t(idx_min), s_triuksmas(idx_min), 's', ...
+plot(t(idx_min), b(idx_min), 's', ...
      'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'yellow', 'MarkerSize', 8);
 hold off;
 title('Signalo reikšmės, viršijančios U_1 ribą (diskretus formatas)');
